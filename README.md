@@ -16,6 +16,8 @@
   <img alt="Happy" src="public/home.jpg" width="100%">
 </p>
 
+Acesse a aplicação aqui 👉 https://moveit-nlw-ten.vercel.app/
+
 ## ✨ Tecnologias
 
 Esse projeto foi desenvolvido com as seguintes tecnologias:
