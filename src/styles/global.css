@@ -17,6 +17,8 @@
     --blue: #5965e0;
     --blue-dark: #4953b8;
     --blue-twitter: #2aa9e0;
+    --input-background: #F8F8FC;
+    --input-text: #7c7c7c;
 }
 
 @media(max-width: 1080) {

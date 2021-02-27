@@ -3,6 +3,7 @@ import Cookies from "js-cookie";
 
 import challenges from "../../challenges.json";
 import { LevelUpModal } from "../components/LevelUpModal";
+import { ProfileModal } from "../components/ProfileModal";
 
 interface Challenge {
   type: "body" | "eye";
@@ -11,6 +12,8 @@ interface Challenge {
 }
 
 interface ChallengesContextData {
+  profileName: string;
+  url_img: string;
   level: number;
   currentExperience: number;
   challengesCompleted: number;
@@ -21,9 +24,15 @@ interface ChallengesContextData {
   resetChallenge: () => void;
   completeChallenge: () => void;
   closeLevelUpModal: () => void;
+  openProfileModal: () => void;
+  closeProfileModal: () => void;
+  saveProfile: (name: string, url: string) => void;
+  setUrlImg: (url: string) => void;
 }
 
 interface ChallengesProviderProps {
+  name: string;
+  url_img: string;
   children: ReactNode;
   level: number;
   currentExperience: number;
@@ -36,6 +45,9 @@ export function ChallengesProvider({
   children,
   ...rest
 }: ChallengesProviderProps) {
+  console.log("ctx : ", rest);
+  const [profileName, setProfileName] = useState(rest.name ?? "");
+  const [url_img, setUrlImg] = useState(rest.url_img ?? "");
   const [level, setLevel] = useState(rest.level ?? 1);
   const [currentExperience, setCurrentExperience] = useState(
     rest.currentExperience ?? 0
@@ -45,6 +57,9 @@ export function ChallengesProvider({
   );
   const [activeChallenge, setActiveChallenge] = useState(null);
   const [isLevelUpModalOpen, setIsLevelUpModalOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(
+    profileName === "" ? true : false
+  );
 
   const experienceToNextLevel = Math.pow((level + 1) * 4, 2);
 
@@ -53,10 +68,12 @@ export function ChallengesProvider({
   }, []);
 
   useEffect(() => {
+    Cookies.set("profileName", profileName);
+    Cookies.set("url_img", url_img);
     Cookies.set("level", String(level));
     Cookies.set("currentExperience", String(currentExperience));
     Cookies.set("challengesCompleted", String(challengesCompleted));
-  }, [level, currentExperience, challengesCompleted]);
+  }, [level, currentExperience, challengesCompleted, profileName, url_img]);
 
   function levelUp() {
     setLevel(level + 1);
@@ -65,6 +82,20 @@ export function ChallengesProvider({
 
   function closeLevelUpModal() {
     setIsLevelUpModalOpen(false);
+  }
+
+  function openProfileModal() {
+    setIsProfileModalOpen(true);
+  }
+
+  function closeProfileModal() {
+    setIsProfileModalOpen(false);
+  }
+
+  function saveProfile(name: string, url: string) {
+    setProfileName(name);
+    setUrlImg(url);
+    setIsProfileModalOpen(false);
   }
 
   function startNewChallenge() {
@@ -108,6 +139,8 @@ export function ChallengesProvider({
   return (
     <ChallengesContext.Provider
       value={{
+        profileName,
+        url_img,
         level,
         currentExperience,
         challengesCompleted,
@@ -118,10 +151,15 @@ export function ChallengesProvider({
         resetChallenge,
         completeChallenge,
         closeLevelUpModal,
+        saveProfile,
+        setUrlImg,
+        openProfileModal,
+        closeProfileModal,
       }}
     >
       {children}
-      { isLevelUpModalOpen && <LevelUpModal />}
+      {isLevelUpModalOpen && <LevelUpModal />}
+      {isProfileModalOpen && <ProfileModal />}
     </ChallengesContext.Provider>
   );
 }

@@ -12,15 +12,18 @@ import styles from "../styles/pages/Home.module.css";
 import { ChallengesProvider } from "../contexts/ChallengesContext";
 
 interface HomeProps {
+  name: string;
+  url_img: string;
   level: number;
   currentExperience: number;
   challengesCompleted: number;
 }
 
 export default function Home(props: HomeProps) {
-  console.log(props);
   return (
     <ChallengesProvider
+      name={props.name}
+      url_img={props.url_img}
       level={props.level}
       currentExperience={props.currentExperience}
       challengesCompleted={props.challengesCompleted}
@@ -50,10 +53,12 @@ export default function Home(props: HomeProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const { level, currentExperience, challengesCompleted } = ctx.req.cookies;
-
+  const { level, currentExperience, challengesCompleted, profileName, url_img } = ctx.req.cookies;
+  console.log('index: ',ctx.req.cookies);
   return {
     props: {
+      name: profileName ? profileName : null,
+      url_img: url_img ? url_img : null,     
       level: Number(level),
       currentExperience: Number(currentExperience),
       challengesCompleted: Number(challengesCompleted),
